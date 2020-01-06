@@ -28,15 +28,6 @@ This library provide some helpers to deal with this problem, and also:
 
 == Setup
 
-Currently supported only with deps:
-
-```clojure
-{:deps {com.wsscode/async {:git/url "https://github.com/wilkerlucio/wsscode-async.git"
-                           :sha     "50ecd19d657980f2dd3c38b2df86a86983778145"}}
-```
-
-=== Including this library
-
 This library uses separated namespaces for Clojure and ClojureScript, when using the
 Clojure side, use the namespace `com.wsscode.async.async-clj`, and for ClojureScript
 use `com.wsscode.async.async-cljs`. Unless pointed otherwise, the features on both
