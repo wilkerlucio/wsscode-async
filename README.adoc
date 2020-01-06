@@ -1,4 +1,16 @@
 = WSSCode Async Helpers
+:linkattrs:
+:toc:
+:toc-placement!:
+:hardbreaks:
+:sectanchors:
+ifdef::env-github,env-cljdoc[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
 Core.async is the standard way to handle async features in Clojure and ClojureScript programs.
 
