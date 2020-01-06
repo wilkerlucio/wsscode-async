@@ -105,6 +105,7 @@ We just saw the helper `<?` to do a take and check for errors, here is a list of
 take helpers provided by this library:
 
 - `<?` - take and throw errors
+- `<!p` (cljs only) - take from JS Promise
 - `<!maybe` - if param is a channel, take from it, otherwise return its value
 - `<!!maybe` (clj only) - like `<!maybe` but blocking the thread
 - `<?maybe` - take and throw errors, return value if it's not a channel
@@ -122,7 +123,7 @@ were `core.async` channels, the `<!p` helper:
 [source,clojure]
 ----
 (ns my-ns
-  (:require [com.wsscode.async.async-cljs :refer [go-promise <?]))
+  (:require [com.wsscode.async.async-cljs :refer [go-promise <? <!p]))
 
 ; <1>
 (go-promise
