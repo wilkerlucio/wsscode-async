@@ -65,7 +65,7 @@ Another difference when using `go-promise` is that different from regular `go`, 
 return `nil` as a value. Since the promise will always return the same value, a `nil`
 is not ambiguous.
 
-INFO: In the implementation side, `go-promise` check if the value returned is `nil`, and
+NOTE: In the implementation side, `go-promise` check if the value returned is `nil`, and
 if so it just closes the channel, making it an effective `nil` value.
 
 == Javascript Promises
