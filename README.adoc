@@ -1,4 +1,4 @@
-= WSSCode Async Helpers
+= WSSCode Async Helpers [![Clojars Project](https://img.shields.io/clojars/v/com.wsscode/async.svg)](https://clojars.org/com.wsscode/async) [![cljdoc badge](https://cljdoc.xyz/badge/com.wsscode/async)](https://cljdoc.xyz/d/com.wsscode/async/CURRENT)
 ifdef::env-github,env-cljdoc[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
