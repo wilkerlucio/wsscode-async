@@ -113,9 +113,12 @@ were `core.async` channels, the `<!p` helper:
       js/console.log))
 ----
 
-<1> read the index text of the current domain, note we are waiting for two different
+<1> Read the index text of the current domain, note we are waiting for two different
 promises in this example, the first one for the fetch headers and the second to get the
 body text.
+
+Note that this strategy allows the mixing of both `core.async` channels and promises
+in the same system, you can both park for channels or promises.
 
 == Javascript Async tests
 
