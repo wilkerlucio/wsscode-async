@@ -10,7 +10,7 @@ endif::[]
 `Core.async` is the standard way to handle async features in Clojure and ClojureScript programs.
 
 Although core.async is built upon link:https://en.wikipedia.org/wiki/Communicating_sequential_processes[CSP],
-often (specially in CLJS) we want to them more like link:https://en.wikipedia.org/wiki/Futures_and_promises[Promises/Futures].
+often (specially in CLJS) is desired to have something that's more like link:https://en.wikipedia.org/wiki/Futures_and_promises[Promises/Futures].
 
 Core.async provides a `promise-chan`, which is a channel that has a promise-like semantic:
 after realization, any read on it will keep returning the same value. That's helpful but
