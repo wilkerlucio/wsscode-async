@@ -43,11 +43,9 @@ an example:
   )
 ----
 
-<1> ; similar to `go`, but will return a promise-channel, so in case this result gets
-; passed to multiple readers, all of them will get the realized value or error.
-;
-; this alsos wraps the block in a try/catch, so if some exception happens it will get
-; returned as the channel value
+<1> `go-promise` is similar to `go`, but will return a promise-channel, so in case this result gets
+passed to multiple readers, all of them will get the realized value or error. This also
+wraps the block in a try/catch, so if some exception happens it will get returned as the channel value.
 
 <2> `<?` works like `<!`, but once it reads a value, it will check if it's an error, and
 if so it will throw that error, propagating it up on the chain.
@@ -55,6 +53,20 @@ if so it will throw that error, propagating it up on the chain.
 <3> propagate value back
 
 <4> error propagated from async-divide trying to divide by zero
+
+By following this pattern of error capture and send, this system ends up working in the
+same ways you would expect a promise, all while still in the same `go` blocks, making
+it compatible with standard core.async functionality. Later we will also talk about how
+to integrate with Javascript Promises in this system.
+
+=== Nil returns
+
+Another difference when using `go-promise` is that different from regular `go`, you can
+return `nil` as a value. Since the promise will always return the same value, a `nil`
+is not ambiguous.
+
+INFO: In the implementation side, `go-promise` check if the value returned is `nil`, and
+if so it just closes the channel, making it an effective `nil` value.
 
 == Javascript Promises
 
