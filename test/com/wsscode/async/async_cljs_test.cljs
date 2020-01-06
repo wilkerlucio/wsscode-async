@@ -57,6 +57,14 @@
   (is (= (<! (wa/go (wa/<! (wa/go "foo"))))
          "foo")))
 
+(wa/deftest-async test-<!p
+  (is (= (wa/<!p (js/Promise.resolve "foo"))
+         "foo"))
+
+  (is (thrown?
+        js/Error
+        (wa/<!p (js/Promise.reject (js/Error.))))))
+
 (wa/deftest-async test-<?
   (let [err (ex-info "foo" {:bar "baz"})]
     (is (= (<! (wa/go-promise
@@ -75,6 +83,9 @@
          "foo"))
 
   (is (= (<! (go (wa/<?maybe (go "foo"))))
+         "foo"))
+
+  (is (= (<! (go (wa/<?maybe (js/Promise.resolve "foo"))))
          "foo"))
 
   (let [err (ex-info "foo" {:bar "baz"})]

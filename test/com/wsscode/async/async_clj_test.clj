@@ -1,7 +1,7 @@
 (ns com.wsscode.async.async-clj-test
   (:require [clojure.test :refer :all]
             [clojure.core.async :as async :refer [go <!!]]
-            [com.wsscode.async.async-clj :as wa :refer [go-promise <?]])
+            [com.wsscode.async.async-clj :as wa])
   (:import (clojure.lang ExceptionInfo)))
 
 (defn fail-ch
@@ -132,21 +132,3 @@
                   (throw err2)
                   x))
            err2))))
-
-(defn async-divide [x y]
-  ; <1>
-  (go-promise
-    (/ x y)))
-
-(defn run [d]
-  (go-promise
-    (try
-      ; <2>
-      (<? (async-divide 6 d))
-      (catch Throwable _
-        "ERROR"))))
-
-(comment
-  (<!! (run 2)) ; => 3
-  (<!! (run 0)) ; => "ERROR"
-  )

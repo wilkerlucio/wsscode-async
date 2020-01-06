@@ -4,8 +4,6 @@
             [cljs.core.async.impl.protocols :as async.prot]
             [goog.object :as gobj]))
 
-(def ^:dynamic *default-test-timeout* 2000)
-
 (defn chan?
   "Check if c is a core.async channel."
   [c]
