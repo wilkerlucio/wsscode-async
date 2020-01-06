@@ -17,8 +17,10 @@ after realization, any read on it will keep returning the same value. That's hel
 this doesn't cover the problem of error propagation, in a promise system it's expected
 that errors can flow up to be captured by some higher level code.
 
-This library provide some helpers to deal with this problem, and also helpers to integrate
-with Javascript Promises in ClojureScript environments.
+This library provide some helpers to deal with this problem, and also:
+
+1. helpers to integrate with Javascript Promises in ClojureScript environments.
+2. helpers to write tests using core.async and cljs.test.
 
 == Including this library
 
