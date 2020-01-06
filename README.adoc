@@ -1,4 +1,7 @@
-= WSSCode Async Helpers [![Clojars Project](https://img.shields.io/clojars/v/com.wsscode/async.svg)](https://clojars.org/com.wsscode/async) [![cljdoc badge](https://cljdoc.xyz/badge/com.wsscode/async)](https://cljdoc.xyz/d/com.wsscode/async/CURRENT)
+= WSSCode Async Helpers
+image:https://img.shields.io/clojars/v/com.wsscode/async.svg[link=https://clojars.org/com.wsscode/async]
+image:https://cljdoc.xyz/badge/com.wsscode/async["cljdoc", link="https://cljdoc.xyz/d/com.wsscode/pathom/CURRENT"]
+
 ifdef::env-github,env-cljdoc[]
 :tip-caption: :bulb:
 :note-caption: :information_source:
