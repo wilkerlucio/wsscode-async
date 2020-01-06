@@ -9,7 +9,7 @@ ifdef::env-github,env-cljdoc[]
 endif::[]
 
 image:https://img.shields.io/clojars/v/com.wsscode/async.svg[link=https://clojars.org/com.wsscode/async]
-image:https://cljdoc.xyz/badge/com.wsscode/async["cljdoc", link="https://cljdoc.xyz/d/com.wsscode/pathom/CURRENT"]
+image:https://cljdoc.xyz/badge/com.wsscode/async["cljdoc", link="https://cljdoc.xyz/d/com.wsscode/async/CURRENT"]
 
 `Core.async` is the standard way to handle async features in Clojure and ClojureScript programs.
 
