@@ -1,8 +1,6 @@
 = WSSCode Async Helpers
 :linkattrs:
 :toc:
-:toc-placement!:
-:hardbreaks:
 :sectanchors:
 ifdef::env-github,env-cljdoc[]
 :tip-caption: :bulb:
