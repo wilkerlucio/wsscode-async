@@ -124,8 +124,10 @@
          (let [timeout-ms# ~timeout]
            (async/go
              (let [timer# (cljs.core.async/timeout timeout-ms#)
-                   [res# ch#] (cljs.core.async/alts! [(async/go ~@body) timer#] :priority true)]
+                   [res# ch#] (cljs.core.async/alts! [(go-promise ~@body) timer#] :priority true)]
                (if (= ch# timer#)
                  (cljs.test/is (= (str "Test timeout after " timeout-ms# "ms") false)))
+               (if (error? res#)
+                 (cljs.test/is (= res# false)))
                (done#)
                res#)))))))

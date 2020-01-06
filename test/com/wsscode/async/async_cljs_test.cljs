@@ -1,7 +1,7 @@
 (ns com.wsscode.async.async-cljs-test
   (:require [clojure.test :refer [is are run-tests async testing deftest]]
             [clojure.core.async :as async :refer [go <!]]
-            [com.wsscode.async.async-cljs :as wa]))
+            [com.wsscode.async.async-cljs :as wa :refer [go-promise <!p <? <?maybe]]))
 
 (defn fail-ch
   ([] (fail-ch (ex-info "foo" {:bar "baz"})))
@@ -59,11 +59,7 @@
 
 (wa/deftest-async test-<!p
   (is (= (wa/<!p (js/Promise.resolve "foo"))
-         "foo"))
-
-  (is (thrown?
-        js/Error
-        (wa/<!p (js/Promise.reject (js/Error.))))))
+         "foo")))
 
 (wa/deftest-async test-<?
   (let [err (ex-info "foo" {:bar "baz"})]
@@ -115,12 +111,17 @@
          "foo"))
 
   (is (= (<! (wa/let-chan* [x (go "foo")]
-                x))
+               x))
          "foo"))
 
   (let [err1 (ex-info "foo" {})
         err2 (ex-info "foo2" {})]
     (is (= (<! (wa/let-chan* [x (fail-ch err1)]
-                  (throw err2)
-                  x))
+                 (throw err2)
+                 x))
            err2))))
+
+(go-promise
+  (-> (js/fetch "/") <!p
+      (.text) <!p
+      js/console.log))
