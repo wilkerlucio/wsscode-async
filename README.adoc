@@ -155,4 +155,5 @@ You can configure the timeout duration, example:
 
 == API
 
-Check the complete API at link:[cljdoc].
+There are other minor helpers not mentioned in this document, but they all have documentation
+on the functions, to check it out see the link:[cljdoc page] of this library.
