@@ -1,0 +1,70 @@
+= WSSCode Async Helpers
+
+Core.async is the standard way to handle async features in Clojure and ClojureScript programs.
+
+Although core.async is built upon link:https://en.wikipedia.org/wiki/Communicating_sequential_processes[CSP],
+often (specially in CLJS) we want to them more like link:https://en.wikipedia.org/wiki/Futures_and_promises[Promises/Futures].
+
+Core.async provides a `promise-chan`, which is a channel that has a promise-like semantic:
+after realization, any read on it will keep returning the same value. That's helpful but
+this doesn't cover the problem of error propagation, in a promise system it's expected
+that errors can flow up to be captured by some higher level code.
+
+This library provide some helpers to deal with this problem, and also helpers to integrate
+with Javascript Promises in ClojureScript environments.
+
+== Error propagation
+
+To deal with error propagation, the trick is to return the error object as the channel
+value, but also throw that error when reading the channel. Let's illustrate that with
+an example:
+
+[source,clojure]
+----
+(ns my-ns
+  (:require [com.wsscode.async.async-clj :refer [go-promise <?]))
+
+(defn async-divide [x y]
+  ; <1>
+  (go-promise
+    (/ x y)))
+
+(defn run [d]
+  (go-promise
+    (try
+      ; <2>
+      (<? (async-divide 6 d))
+      (catch Throwable _
+        "ERROR"))))
+
+(comment
+  (<!! (run 2)) ; => 3 <3>
+  (<!! (run 0)) ; => "ERROR" <4>
+  )
+----
+
+<1> ; similar to `go`, but will return a promise-channel, so in case this result gets
+; passed to multiple readers, all of them will get the realized value or error.
+;
+; this alsos wraps the block in a try/catch, so if some exception happens it will get
+; returned as the channel value
+
+<2> `<?` works like `<!`, but once it reads a value, it will check if it's an error, and
+if so it will throw that error, propagating it up on the chain.
+
+<3> propagate value back
+
+<4> error propagated from async-divide trying to divide by zero
+
+== Javascript Promises
+
+== Javascript Async tests
+
+== Helpers
+
+`chan?`
+`promise?`
+
+== Using in CLJC files
+
+This library uses separated namespaces for Clojure and ClojureScript due to
