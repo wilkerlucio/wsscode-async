@@ -136,6 +136,9 @@ were `core.async` channels, the `<!p` helper:
 promises in this example, the first one for the fetch headers and the second to get the
 body text.
 
+NOTE: the way `<!p` works is by first converting the Promise into a core.async channel
+and them read on that channel, for core.async sake it's channels all the way.
+
 Note that this strategy allows the mixing of both `core.async` channels and promises
 in the same system, you can both park for channels or promises.
 
