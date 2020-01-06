@@ -7,7 +7,7 @@ ifdef::env-github,env-cljdoc[]
 :warning-caption: :warning:
 endif::[]
 
-Core.async is the standard way to handle async features in Clojure and ClojureScript programs.
+`Core.async` is the standard way to handle async features in Clojure and ClojureScript programs.
 
 Although core.async is built upon link:https://en.wikipedia.org/wiki/Communicating_sequential_processes[CSP],
 often (specially in CLJS) we want to them more like link:https://en.wikipedia.org/wiki/Futures_and_promises[Promises/Futures].
@@ -19,6 +19,24 @@ that errors can flow up to be captured by some higher level code.
 
 This library provide some helpers to deal with this problem, and also helpers to integrate
 with Javascript Promises in ClojureScript environments.
+
+== Including this library
+
+This library uses separated namespaces for Clojure and ClojureScript, when using the
+Clojure side, use the namespace `com.wsscode.async.async-clj`, and for ClojureScript
+use `com.wsscode.async.async-cljs`. Unless pointed otherwise, the features on both
+namespaces are the same.
+
+If you want to use this with Clojure Common files, you can use the require like this:
+
+[source,clojure]
+----
+(ns my-ns
+  (:require [#?(:clj  com.wsscode.common.async-clj
+                :cljs com.wsscode.common.async-cljs)
+             :as wa
+             :refer [go-promise <?]]))
+----
 
 == Error propagation
 
