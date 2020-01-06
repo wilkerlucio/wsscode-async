@@ -112,7 +112,10 @@ take helpers provided by this library:
 . `<?` - take and throw errors
 . `<!maybe` - if param is a channel, take from it, otherwise return its value
 . `<!!maybe` (clj only) - like `<!maybe` but blocking the thread
-. `<?maybe` - take and throw errors, return value if it's not a channel (in ClojureScript this can also take from Promises)
+. `<?maybe` - take and throw errors, return value if it's not a channel
+
+TIP:  in ClojureScript `<?maybe` can also take from Promises
+
 . `<?!maybe` (clj only) - like `<?maybe` but blocking the thread
 
 == Javascript Promises
