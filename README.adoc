@@ -109,11 +109,11 @@ if so it just closes the channel, making it an effective `nil` value.
 We just saw the helper `<?` to do a take and check for errors, here is a list of other
 take helpers provided by this library:
 
-`<?` - take and throw errors
-`<!maybe` - if param is a channel, take from it, otherwise return its value
-`<!!maybe` (clj only) - like `<!maybe` but blocking the thread
-`<?maybe` - take and throw errors, return value if it's not a channel (in ClojureScript this can also take from Promises)
-`<?!maybe` (clj only) - like `<?maybe` but blocking the thread
+. `<?` - take and throw errors
+. `<!maybe` - if param is a channel, take from it, otherwise return its value
+. `<!!maybe` (clj only) - like `<!maybe` but blocking the thread
+. `<?maybe` - take and throw errors, return value if it's not a channel (in ClojureScript this can also take from Promises)
+. `<?!maybe` (clj only) - like `<?maybe` but blocking the thread
 
 == Javascript Promises
 
