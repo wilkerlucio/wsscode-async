@@ -178,6 +178,9 @@ You can configure the timeout duration, example:
   (is (= "foo" (<! (go "foo")))))
 ----
 
+TIP: if you want to use this helper with a different test constructor (from Workspaces
+or Devcards for example) you can use the `wa/async-test` helper instead
+
 == API
 
 There are other minor helpers not mentioned in this document, but they all have documentation

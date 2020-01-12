@@ -97,6 +97,42 @@
        (let [~name res#]
          ~@body))))
 
+(defmacro async-test
+  "Creates an async block on the test, this helper uses the cljs.test async feature, the user body
+  will be wrapped around a `go` block automatically and the async done will be called
+  after the go block finishes it's execution. Example:
+
+      (deftest async-test
+        (wa/async-test
+          (is (= 42 (<! (some-async-op)))))
+
+  This will also add a timeout (default 2000ms), to change the timeout you can send
+  a map with configuration after the test symbol, example:
+
+      (deftest async-test
+        (wa/async-test
+          {::wa/timeout 5000} ; 5000ms timeout
+          (is (= 42 (<! (some-async-op)))))
+  "
+  [& body]
+  (let [[options body]
+        (if (map? (first body))
+          [(first body) (rest body)]
+          [{} body])
+
+        {::keys [timeout]} (merge {::timeout 2000} options)]
+    `(cljs.test/async done#
+       (let [timeout-ms# ~timeout]
+         (async/go
+           (let [timer# (cljs.core.async/timeout timeout-ms#)
+                 [res# ch#] (cljs.core.async/alts! [(go-promise ~@body) timer#] :priority true)]
+             (if (= ch# timer#)
+               (cljs.test/is (= (str "Test timeout after " timeout-ms# "ms") false)))
+             (if (error? res#)
+               (cljs.test/is (= res# false)))
+             (done#)
+             res#))))))
+
 (defmacro deftest-async
   "Define an async test, this helper uses the cljs.test async feature, the user body
   will be wrapped around a `go` block automatically and the async done will be called
@@ -111,23 +147,9 @@
       (wa/deftest-async async-test
         {::wa/timeout 5000} ; 5000ms timeout
         (is (= 42 (<! (some-async-op))))
-  "
-  [sym & body]
-  (let [[options body]
-        (if (map? (first body))
-          [(first body) (rest body)]
-          [{} body])
 
-        {::keys [timeout]} (merge {::timeout 2000} options)]
-    `(cljs.test/deftest ~sym
-       (cljs.test/async done#
-         (let [timeout-ms# ~timeout]
-           (async/go
-             (let [timer# (cljs.core.async/timeout timeout-ms#)
-                   [res# ch#] (cljs.core.async/alts! [(go-promise ~@body) timer#] :priority true)]
-               (if (= ch# timer#)
-                 (cljs.test/is (= (str "Test timeout after " timeout-ms# "ms") false)))
-               (if (error? res#)
-                 (cljs.test/is (= res# false)))
-               (done#)
-               res#)))))))
+  If you want to use this with a different `deftest` constructor, use the `async-test`
+  macro."
+  [sym & body]
+  `(cljs.test/deftest ~sym
+     (async-test ~@body)))
