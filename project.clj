@@ -1,4 +1,4 @@
-(defproject com.wsscode/async "1.0.0"
+(defproject com.wsscode/async "1.0.1"
   :description "Helpers for core.async."
   :url "https://github.com/wilkerlucio/wsscode-async"
   :license {:name "MIT"
