@@ -21,18 +21,25 @@
        ~@body
        (catch Throwable e# e#))))
 
+(defn nil-safe-put!
+"Same as `async/put!`, but can propagate nil values by closing the channel.
+ `false` propagated normally."
+[ch x]
+(if (nil? x)
+  (async/close! ch)
+  (async/put! ch x))
+
 (defmacro go-promise
   "Creates a go block using a promise channel, so the output of the go block can be
   read any number of times once ready."
   [& body]
   `(let [ch# (async/promise-chan)]
      (async/go
-       (let [res# (try
-                    ~@body
-                    (catch Throwable e# e#))]
-         (if res#
-           (async/put! ch# res#)
-           (async/close! ch#))))
+       (nil-safe-put! 
+         ch# 
+         (try
+           ~@body
+           (catch Throwable e# e#)))
      ch#))
 
 (defn error?
