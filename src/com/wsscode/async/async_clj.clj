@@ -27,12 +27,11 @@
   [& body]
   `(let [ch# (async/promise-chan)]
      (async/go
-       (let [res# (try
-                    ~@body
-                    (catch Throwable e# e#))]
-         (if (some? res#)
-           (async/put! ch# res#)
-           (async/close! ch#))))
+       (if-some [res# (try
+                        ~@body
+                        (catch Throwable e# e#))]
+         (async/put! ch# res#)
+         (async/close! ch#)))
      ch#))
 
 (defn error?

@@ -21,12 +21,11 @@
   [& body]
   `(let [ch# (cljs.core.async/promise-chan)]
      (async/go
-       (let [res# (try
-                    ~@body
-                    (catch :default e# e#))]
-         (if (some? res#)
-           (cljs.core.async/put! ch# res#)
-           (cljs.core.async/close! ch#))))
+       (if-some [res# (try
+                        ~@body
+                        (catch :default e# e#))]
+         (cljs.core.async/put! ch# res#)
+         (cljs.core.async/close! ch#)))
      ch#))
 
 (defmacro <!
