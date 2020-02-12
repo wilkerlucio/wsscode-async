@@ -40,7 +40,11 @@
 
   (testing "handle nil by closing the channel"
     (is (= (<!! (wa/go-promise nil))
-           nil))))
+           nil)))
+
+  (testing "can return false"
+    (is (= (<!! (wa/go-promise false))
+           false))))
 
 (deftest test-error?
   (is (false? (wa/error? 1)))

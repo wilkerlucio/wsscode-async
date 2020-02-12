@@ -24,7 +24,7 @@
        (let [res# (try
                     ~@body
                     (catch :default e# e#))]
-         (if res#
+         (if (some? res#)
            (cljs.core.async/put! ch# res#)
            (cljs.core.async/close! ch#))))
      ch#))
