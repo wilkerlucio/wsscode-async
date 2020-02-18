@@ -1,4 +1,4 @@
-= WSSCode Async Helpers
+= core.async helpers
 
 ifdef::env-github,env-cljdoc[]
 :tip-caption: :bulb:
