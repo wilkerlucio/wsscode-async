@@ -18,8 +18,19 @@
   (is (= (<!! (wa/go "foo"))
          "foo")))
 
+(deftest test-thread
+  (is (= (<!! (wa/thread "foo"))
+         "foo")))
+
 (deftest test-go-catch
   (is (= (<!! (wa/go-catch "foo"))
+         "foo"))
+  (let [err (ex-info "foo" {:bar "baz"})]
+    (is (= (<!! (fail-ch err))
+           err))))
+
+(deftest test-thread-catch
+  (is (= (<!! (wa/thread-catch "foo"))
          "foo"))
   (let [err (ex-info "foo" {:bar "baz"})]
     (is (= (<!! (fail-ch err))
@@ -44,6 +55,27 @@
 
   (testing "can return false"
     (is (= (<!! (wa/go-promise false))
+           false))))
+
+(deftest test-thread-promise
+  (let [ch (wa/thread-promise "foo")]
+    (is (= (<!! ch)
+           "foo"))
+    (is (= (<!! ch)
+           "foo")))
+  (let [err (ex-info "foo" {:bar "baz"})
+        ch  (fail-ch err)]
+    (is (= (<!! ch)
+           err))
+    (is (= (<!! ch)
+           err)))
+
+  (testing "handle nil by closing the channel"
+    (is (= (<!! (wa/thread-promise nil))
+           nil)))
+
+  (testing "can return false"
+    (is (= (<!! (wa/thread-promise false))
            false))))
 
 (deftest test-error?
