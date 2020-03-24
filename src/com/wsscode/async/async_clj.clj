@@ -8,30 +8,56 @@
   (satisfies? async.prot/ReadPort c))
 
 (defmacro go
-  "Same as clojure.core.async/go. Just a convenience place for it."
+  "Same as `clojure.core.async/go`. Just a convenience place for it."
   [& body]
   `(async/go ~@body))
+
+(defmacro thread
+  "Same as `clojure.core.async/thread`. Just a convenience place for it."
+  [& body]
+  `(async/thread ~@body))
+
+(defmacro catch-all
+  "Catches all Throwable exceptions and returns them as-is."
+  [& body]
+  `(try
+     ~@body
+     (catch Throwable e# e#)))
 
 (defmacro go-catch
   "Creates a go block that has a try/catch wrapping body, in case of errors the error
   flows up as data instead triggering the exception."
   [& body]
-  `(async/go
-     (try
-       ~@body
-       (catch Throwable e# e#))))
+  `(async/go (catch-all ~@body)))
+
+(defmacro thread-catch
+  "Creates a thread that has a try/catch wrapping body, in case of errors the error
+  flows up as data instead triggering the exception."
+  [& body]
+  `(async/thread (catch-all ~@body)))
+
+(defmacro nil-safe-put!
+  "Puts result of body on the provided channel if non-nil, else it closes it.
+  A workaround to allow communicating nils."
+  [ch & body]
+  `(if-some [res# (catch-all ~@body)]
+     (async/put! ~ch res#)
+     (async/close! ~ch)))
 
 (defmacro go-promise
   "Creates a go block using a promise channel, so the output of the go block can be
   read any number of times once ready."
   [& body]
   `(let [ch# (async/promise-chan)]
-     (async/go
-       (if-some [res# (try
-                        ~@body
-                        (catch Throwable e# e#))]
-         (async/put! ch# res#)
-         (async/close! ch#)))
+     (async/go (nil-safe-put! ch# ~@body))
+     ch#))
+
+(defmacro thread-promise
+  "Creates a thread using a promise channel, so the output of the thread block can be
+  read any number of times once ready."
+  [& body]
+  `(let [ch# (async/promise-chan)]
+     (async/thread (nil-safe-put! ch# ~@body))
      ch#))
 
 (defn error?
