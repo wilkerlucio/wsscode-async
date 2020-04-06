@@ -26,6 +26,8 @@ This library provide some helpers to deal with this problem, and also:
 
 1. helpers to integrate with Javascript Promises in ClojureScript environments.
 2. helpers to write tests using core.async and cljs.test.
+3. serialized event callback handling
+4. `ID` based async callbacks
 
 == Setup
 
@@ -181,6 +183,133 @@ You can configure the timeout duration, example:
 
 TIP: if you want to use this helper with a different test constructor (from Workspaces
 or Devcards for example) you can use the `wa/async-test` helper instead
+
+== Serialised event callback handling
+
+This library provides a helper to serialize async event callbacks. By default, if you
+do event handling like this:
+
+[source,clojure]
+----
+(.on some-object "event"
+  (fn handler-fn [e]
+    (go
+      (-> (do-operation e) <!
+          (do-more) <!))))
+----
+
+In case many events come rapidly, the callbacks will run in between each other, a lot of
+times that's not a problem, but if you need sequencing then this may get you in trouble.
+
+To handle this you can use the `event-queue!` helper:
+
+[source,clojure]
+----
+(.on some-object "event"
+  (wap/event-queue!
+    (fn handler-fn [e]
+      (go
+        (-> (do-operation e) <!
+            (do-more) <!)))))
+----
+
+INFO: `wap` is alias for `com.wsscode.async.processing`
+
+The `event-queue!` returns a new callback function that instead of calling `handler` directly,
+it will add the event to a queue for processing, in case the handler returns a channel,
+that channel will be awaited before processing the next event, this a very easy and
+quick way to ensure serialisation.
+
+By default the queue will use one `(async/chan (async/dropping-buffer 1024))`. You can
+override it with:
+
+[source,clojure]
+----
+(.on some-object "event"
+  (wap/event-queue! {::wap/channel (async/chan (async/sliding-buffer 1024))}
+    (fn handler-fn [e]
+      (go
+        (-> (do-operation e) <!
+            (do-more) <!)))))
+----
+
+=== Killing the process loop
+
+One way to stop the processing from running is to send a custom channel, and when you
+want to stop processing you close it. Example:
+
+[source,clojure]
+----
+(let [ch (async/chan (async/sliding-buffer 1024))]
+  (.on some-object "event"
+    (wap/event-queue! {::wap/channel ch}
+      (fn handler-fn [e]
+        (go
+          (-> (do-operation e) <!
+              (do-more) <!)))))
+
+  ; later in the future
+  (async/close! ch))
+----
+
+== ID based callback mechanism
+
+If you use something like Websockets for communication, depending on the library you are
+using they may or may not include some way to handle callback events. To handle this (or
+any other case were message callbacks are not a native option) this library provides
+some helpers.
+
+The idea is to send a message providing some `ID`, and then wait for a response message
+to come, the response will include the same `ID` from the request, so they match.
+
+This process happens in three main steps:
+
+1. Once we send a message requiring a callback, create something to get notified once the response arrives
+2. If you read a message that wants a response, create and send the response message
+3. Listen to message responses on the event entry point
+
+This mechanism assumes your message are maps.
+
+To implement `1`, you create a function that wraps whatever your transmit function is:
+
+[source,clojure]
+----
+(defn send-message! [msg]
+  (original-send-message! msg)
+  ; this will check if the message has a request-id, and if so will create a channel
+  ; that will have data available once the message is replied
+  (wap/await! msg))
+----
+
+Then, wrap your read side with the `capture-response!` helper:
+
+[source,clojure]
+----
+(defn handle-message [msg]
+  ; this will fire the handler when the message contains ::wap/response-id, otherwise
+  ; it lets the message flow
+  (if-not (wap/capture-response! msg)
+    (original-handle-msg msg)))
+----
+
+In your handle, to reply a message, to this:
+
+[source,clojure]
+----
+(defn some-handler [msg]
+  (send-message! (wap/reply-message msg) "reply value"))
+----
+
+And finally, to issue a request and wait for the callback:
+
+[source,clojure]
+----
+(go
+  (let [res (<? (send-message! (assoc msg ::wap/request-id (wap/random-request-id))))]
+    (print "Response: " res)))
+----
+
+INFO: The `await!` helper has a built-in timeout mechanism, the default wait time is 5s.
 
 == API
 
