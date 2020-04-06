@@ -213,7 +213,7 @@ To handle this you can use the `event-queue!` helper:
             (do-more) <!)))))
 ----
 
-INFO: `wap` is alias for `com.wsscode.async.processing`
+NOTE: `wap` is alias for `com.wsscode.async.processing`
 
 The `event-queue!` returns a new callback function that instead of calling `handler` directly,
 it will add the event to a queue for processing, in case the handler returns a channel,
@@ -309,7 +309,7 @@ And finally, to issue a request and wait for the callback:
     (print "Response: " res)))
 ----
 
-INFO: The `await!` helper has a built-in timeout mechanism, the default wait time is 5s.
+NOTE: The `await!` helper has a built-in timeout mechanism, the default wait time is 5s.
 
 == API
 
