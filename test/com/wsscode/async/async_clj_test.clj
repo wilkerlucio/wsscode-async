@@ -1,7 +1,7 @@
 (ns com.wsscode.async.async-clj-test
   (:require [clojure.test :refer :all]
-            [clojure.core.async :as async :refer [go <!!]]
-            [com.wsscode.async.async-clj :as wa])
+            [clojure.core.async :as async]
+            [com.wsscode.async.async-clj :as wa :refer [go <! <!!]])
   (:import (clojure.lang ExceptionInfo)))
 
 (defn fail-ch
@@ -168,3 +168,6 @@
                   (throw err2)
                   x))
            err2))))
+
+(wa/deftest-async async-demo-test
+  (is (= "foo" (<! (go "foo")))))

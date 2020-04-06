@@ -78,7 +78,7 @@
     x))
 
 (defmacro <!
-  "Same as clojure.core.async/<!!. Just a convenience place for it."
+  "Same as clojure.core.async/<!. Just a convenience place for it."
   [& body]
   `(async/<! ~@body))
 
@@ -142,3 +142,58 @@
            ~@body))
        (let [~name res#]
          ~@body))))
+
+(defmacro async-test
+  "Ths is similar to the CLJS version for async test, but on the Clojure side the `async`
+  helper doesn't exist, instead of using that we block on the wrapper go block. Example:
+
+      (deftest async-test
+        (wa/async-test
+          (is (= 42 (<! (some-async-op)))))
+
+  This will also add a timeout (default 2000ms), to change the timeout you can send
+  a map with configuration after the test symbol, example:
+
+      (deftest async-test
+        (wa/async-test
+          {::wa/timeout 5000} ; 5000ms timeout
+          (is (= 42 (<! (some-async-op)))))
+  "
+  [& body]
+  (let [[options body]
+        (if (map? (first body))
+          [(first body) (rest body)]
+          [{} body])
+
+        {::keys [timeout]} (merge {::timeout 2000} options)]
+    `(let [timeout-ms# ~timeout]
+       (async/<!!
+         (async/go
+           (let [timer# (clojure.core.async/timeout timeout-ms#)
+                 [res# ch#] (clojure.core.async/alts! [(go-promise ~@body) timer#] :priority true)]
+             (if (= ch# timer#)
+               (clojure.test/is (= (str "Test timeout after " timeout-ms# "ms") false)))
+             (if (error? res#)
+               (clojure.test/is (= res# false)))
+             res#))))))
+
+(defmacro deftest-async
+  "Define an async test, this helper uses the clojure.test async feature, the user body
+  will be wrapped around a `go` block automatically and the async done will be called
+  after the go block finishes it's execution. Example:
+
+      (wa/deftest-async async-test
+        (is (= 42 (<! (some-async-op))))
+
+  This will also add a timeout (default 2000ms), to change the timeout you can send
+  a map with configuration after the test symbol, example:
+
+      (wa/deftest-async async-test
+        {::wa/timeout 5000} ; 5000ms timeout
+        (is (= 42 (<! (some-async-op))))
+
+  If you want to use this with a different `deftest` constructor, use the `async-test`
+  macro."
+  [sym & body]
+  `(clojure.test/deftest ~sym
+     (async-test ~@body)))
