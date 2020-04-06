@@ -124,8 +124,3 @@
                  (throw err2)
                  x))
            err2))))
-
-(go-promise
-  (-> (js/fetch "/") <!p
-      (.text) <!p
-      js/console.log))
