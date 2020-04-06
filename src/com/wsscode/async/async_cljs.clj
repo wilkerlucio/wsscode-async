@@ -6,6 +6,11 @@
   [& body]
   `(async/go ~@body))
 
+(defmacro go-loop
+  "Same as `clojure.core.async/go-loop`. Just a convenience place for it."
+  [bindings & body]
+  `(async/go-loop bindings ~@body))
+
 (defmacro go-catch
   "Creates a go block that has a try/catch wrapping body, in case of errors the error
   flows up as data instead triggering the exception."

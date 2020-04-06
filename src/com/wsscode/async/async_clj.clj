@@ -12,6 +12,11 @@
   [& body]
   `(async/go ~@body))
 
+(defmacro go-loop
+  "Same as `clojure.core.async/go-loop`. Just a convenience place for it."
+  [bindings & body]
+  `(async/go-loop bindings ~@body))
+
 (defmacro thread
   "Same as `clojure.core.async/thread`. Just a convenience place for it."
   [& body]
