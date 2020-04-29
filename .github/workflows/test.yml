@@ -23,3 +23,9 @@ jobs:
 
       - name: Test
         run: ./script/test
+
+      - name: Compile tests
+        run: npx shadow-cljs compile ci
+
+      - name: Run tests
+        run: npx karma start --single-run
