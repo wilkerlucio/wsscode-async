@@ -1,4 +1,4 @@
-{:deps   {:aliases [:provided :test]}
+{:deps   {:aliases [:provided :test-cljs]}
  :nrepl  {:port 9538}
  :builds {:test {:target           :browser-test
                  :test-dir         "resources/public/js/test"
