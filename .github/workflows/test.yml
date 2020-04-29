@@ -35,14 +35,14 @@ jobs:
         with:
           node-version: '12.x'
 
-      - name: Install
+      - name: NPM Install
         run: npm install
 
       - name: Test
         run: ./script/test
 
-      - name: Compile tests
+      - name: Compile CLJS tests
         run: npx shadow-cljs compile ci
 
-      - name: Run tests
+      - name: Run CLJS tests
         run: npx karma start --single-run
