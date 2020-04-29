@@ -1,4 +1,6 @@
 = core.async helpers
+:toc:
+:toc-placement!:
 
 ifdef::env-github,env-cljdoc[]
 :tip-caption: :bulb:
@@ -28,6 +30,8 @@ This library provide some helpers to deal with this problem, and also:
 2. helpers to write tests using core.async and cljs.test.
 3. serialized event callback handling
 4. `ID` based async callbacks
+
+toc::[]
 
 == Setup
 
