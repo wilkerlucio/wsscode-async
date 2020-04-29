@@ -186,7 +186,21 @@
                                :error-var symbol?
                                :catch-body (s/+ any?)))))
 
-(defmacro go-try-stream [& args]
+(defmacro go-try-stream
+  "If you want to read from a stream and catch errors in the messages that come
+  from it, this helper is for you.
+
+  The complication around adding try-catch on a go-loop is that we can't recur inside
+  try/catch. This helper will create a structure around it that will catch errors and recur
+  properly.
+
+  Usage:
+
+      (go-try-stream [value some-chan]
+        (do-operation-here)
+        (catch Throwable e
+          (report-error e))"
+  [& args]
   (let [{:keys [params body catch]} (s/conform ::go-try-stream-args args)
         {:keys [error-type error-var catch-body]} catch
         [binding-key binding-value] params]
