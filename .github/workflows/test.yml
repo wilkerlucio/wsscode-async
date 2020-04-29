@@ -6,6 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+
       - name: Check out Git repository
         uses: actions/checkout@v1
 
@@ -20,6 +21,22 @@ jobs:
           key: m2-${{ hashFiles('deps.edn') }}
           restore-keys: |
             m2-
+
+      - name: Cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node_modules-
+
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - name: Install
+        run: npm install
 
       - name: Test
         run: ./script/test
