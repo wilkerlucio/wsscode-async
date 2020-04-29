@@ -121,6 +121,22 @@ take helpers provided by this library:
 
 TIP:  in ClojureScript `<?maybe` can also take from Promises
 
+== Error catching on streaming processes
+
+If you try to use `try/catch` in a loop, you will notice that it doesn't work. To go
+around this limitation this library provides the helper `go-try-stream`, which will
+do the necessary setup to make this work.
+
+Example usage:
+
+[source,clojure]
+----
+(wa/go-try-stream [value c]
+  (swap! vals conj value)
+  (catch :default e
+    (swap! vals conj (ex-message e))))
+----
+
 == Javascript Promises
 
 While working in Javascript it's common to need to handle Promises, to help with this
