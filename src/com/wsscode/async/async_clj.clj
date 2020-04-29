@@ -1,6 +1,7 @@
 (ns com.wsscode.async.async-clj
   (:require [clojure.core.async :as async]
-            [clojure.core.async.impl.protocols :as async.prot]))
+            [clojure.core.async.impl.protocols :as async.prot]
+            [clojure.spec.alpha :as s]))
 
 (defn chan?
   "Check if c is a core.async channel."
@@ -176,6 +177,35 @@
              (if (error? res#)
                (clojure.test/is (= res# false)))
              res#))))))
+
+(s/def ::go-try-stream-args
+  (s/cat :params (s/and vector? #(= 2 (count %)))
+         :body (s/+ any?)
+         :catch (s/spec (s/cat :catch #{'catch}
+                               :error-type any?
+                               :error-var symbol?
+                               :catch-body (s/+ any?)))))
+
+(defmacro go-try-stream [& args]
+  (let [{:keys [params body catch]} (s/conform ::go-try-stream-args args)
+        {:keys [error-type error-var catch-body]} catch
+        [binding-key binding-value] params]
+    `(go-promise
+       (let [continue*# (volatile! true)]
+         (loop []
+           (try
+             (if-let [~binding-key (<? ~binding-value)]
+               (do
+                 ~@body)
+               (vreset! continue*# false))
+             (catch ~error-type ~error-var
+               ~@catch-body))
+           (if @continue*#
+             (recur)))))))
+
+(s/fdef go-try-stream
+  :args ::go-try-stream-args
+  :ret any?)
 
 (defmacro deftest-async
   "Define an async test, this helper uses the clojure.test async feature, the user body

@@ -11,4 +11,4 @@
           :ci   {:target           :karma
                  :compiler-options {:output-feature-set :es6}
                  :ns-regexp        "-test$"
-                 :output-to        "resources/public/ci.js"}}}
+                 :output-to        "target/ci.js"}}}

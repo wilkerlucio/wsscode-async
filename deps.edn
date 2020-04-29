@@ -1,4 +1,4 @@
-{:deps    {org.clojure/core.async {:mvn/version "0.6.532"}}
+{:deps    {org.clojure/core.async {:mvn/version "1.1.587"}}
  :paths   ["src"]
 
  :aliases {:provided
