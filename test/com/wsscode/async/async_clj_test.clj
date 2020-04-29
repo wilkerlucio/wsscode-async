@@ -169,5 +169,17 @@
                   x))
            err2))))
 
+(wa/deftest-async go-try-stream-test
+  (is (= (let [vals (atom [])
+               c    (async/chan 50)]
+           (async/onto-chan c [:a (ex-info "err" {}) :b] true)
+           (<! (wa/go-try-stream [value c]
+                 (println "HERE")
+                 (swap! vals conj value)
+                 (catch :default e
+                   (swap! vals conj (ex-message e)))))
+           @vals)
+         [:a "err" :b])))
+
 (wa/deftest-async async-demo-test
   (is (= "foo" (<! (go "foo")))))
