@@ -10,6 +10,7 @@ endif::[]
 
 image:https://img.shields.io/clojars/v/com.wsscode/async.svg[link=https://clojars.org/com.wsscode/async]
 image:https://cljdoc.xyz/badge/com.wsscode/async["cljdoc", link="https://cljdoc.xyz/d/com.wsscode/async/CURRENT"]
+image:https://github.com/wilkerlucio/wsscode-async/workflows/Test/badge.svg["Test"]
 image:https://circleci.com/gh/wilkerlucio/wsscode-async.svg?style=svg&circle-token=6bea4560862b81fbd044f1178f7932a017ff511e["CircleCI", link="https://circleci.com/gh/wilkerlucio/wsscode-async"]
 
 `Core.async` is the standard way to handle async features in Clojure and ClojureScript programs.
