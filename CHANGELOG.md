@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.7]
+- Change `await!` to skip messages that already have a reply
+
 ## [1.0.6]
 - Important bug fix: `1.0.5` introduced an error by requiring `clojure.core.async`
  instead of `cljs.core.async` for macros, this could break some builds in very 

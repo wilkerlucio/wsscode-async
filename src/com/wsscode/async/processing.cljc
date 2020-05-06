@@ -27,10 +27,10 @@
 
   When message doesn't have a ::request-id this function is a noop, so its safe to
   call in the message return point of your code."
-  [{::keys [request-id timeout] :as msg}]
+  [{::keys [request-id timeout request-response] :as msg}]
   #_[(s/keys :opt [::request-id ::timeout])
      => (? ::channel)]
-  (if request-id
+  (if (and request-id (not request-response))
     (let [chan     (async/promise-chan)
           timeout' (or timeout *default-timeout*)
           timer    (async/timeout timeout')]

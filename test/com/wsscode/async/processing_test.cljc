@@ -22,4 +22,10 @@
   (let [msg     {::wap/request-id (wap/random-request-id)}
         request (wap/await! msg)]
     (wap/capture-response! (wap/reply-message msg "value"))
-    (is (= (<? request) "value"))))
+    (is (= (<? request) "value")))
+
+  (testing "don't try to reply a reply message"
+    (let [msg     {::wap/request-id (wap/random-request-id)
+                   ::wap/request-response "Answered"}
+          request (wap/await! msg)]
+      (is (nil? request)))))
