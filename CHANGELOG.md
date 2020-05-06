@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.5]
+- Add `go-try-stream` helper
+
 ## [1.0.4]
 - Add `go-loop` convenience method
 - Add `com.wsscode.async.processing` namespace
