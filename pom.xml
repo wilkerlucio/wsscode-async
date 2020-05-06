@@ -49,11 +49,6 @@
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
-      <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.clojure</groupId>
       <artifactId>core.async</artifactId>
       <version>1.1.587</version>
     </dependency>
