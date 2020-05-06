@@ -1,5 +1,5 @@
 (ns com.wsscode.async.async-cljs
-  (:require [clojure.core.async :as async]
+  (:require [cljs.core.async :as async]
             [clojure.spec.alpha :as s]))
 
 (defmacro go
