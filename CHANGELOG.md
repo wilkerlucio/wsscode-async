@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.8]
+- Fixes `go-loop` wrappers, thanks clj-kondo!
+
 ## [1.0.7]
 - Change `await!` to skip messages that already have a reply
 
