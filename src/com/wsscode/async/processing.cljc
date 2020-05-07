@@ -1,6 +1,6 @@
 (ns com.wsscode.async.processing
-  (:require [clojure.spec.alpha :as s]
-            [clojure.core.async :as async :refer [go <! chan go-loop]]
+  (:require [clojure.core.async :as async :refer [<! chan go-loop]]
+            [clojure.spec.alpha :as s]
             [#?(:clj  com.wsscode.async.async-clj
                 :cljs com.wsscode.async.async-cljs)
              :refer [<!maybe go-promise]]))

@@ -1,5 +1,5 @@
 (ns com.wsscode.async.async-cljs
-  (:require-macros [com.wsscode.async.async-cljs :refer [go-catch <?]])
+  (:require-macros [com.wsscode.async.async-cljs])
   (:require [cljs.core.async :as async]
             [cljs.core.async.impl.protocols :as async.prot]
             [goog.object :as gobj]))

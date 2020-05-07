@@ -1,10 +1,10 @@
 (ns com.wsscode.async.processing-test
-  (:require [clojure.test :refer [deftest is are run-tests testing]]
-            [com.wsscode.async.processing :as wap]
+  (:require [clojure.core.async :as async]
+            [clojure.test :refer [deftest is are run-tests testing]]
             [#?(:clj  com.wsscode.async.async-clj
                 :cljs com.wsscode.async.async-cljs)
-             :refer [go-promise <! <? <?maybe deftest-async]]
-            [clojure.core.async :as async]))
+             :refer [go-promise <! <? deftest-async]]
+            [com.wsscode.async.processing :as wap]))
 
 (deftest-async event-queue!-test
   (let [out      (atom [])
