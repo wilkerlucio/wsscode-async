@@ -4,7 +4,7 @@
   <groupId>com.wsscode</groupId>
   <artifactId>async</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.7</version>
+  <version>1.0.8</version>
   <name>async</name>
   <description>Helpers for core.async.</description>
   <url>https://github.com/wilkerlucio/wsscode-async</url>
