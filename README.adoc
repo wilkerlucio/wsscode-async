@@ -237,9 +237,9 @@ is something expected.
 
 This function takes the following options and then the body:
 
-`:done?` - a `fn` that should return true if the value of expression is expected and the retry should stop
-`:retry-ms` (default 10ms) - time to wait before trying the operation again
-`:timeout` (default 2s) - Max time to wait for operation, bail after
+`::wa/done?` - a `fn` that should return true if the value of expression is expected and the retry should stop
+`::wa/retry-ms` (default 10ms) - time to wait before trying the operation again
+`::wa/timeout` (default 2s) - Max time to wait for operation, bail after
 
 Body can be sync or async.
 
