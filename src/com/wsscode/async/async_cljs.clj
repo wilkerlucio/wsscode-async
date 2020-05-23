@@ -103,12 +103,29 @@
          ~@body))))
 
 (defmacro pulling-retry
-  "Async pulling mechanism that will run body will :done? is satisfied"
+  "Async pulling mechanism that will run body will ::done? is satisfied.
+
+  There two ways to call this helper:
+    Shorthand version: pass the ::done? function and the body:
+
+      (wa/pulling-retry int? (do-something))
+
+    Or the full version to specify all details
+
+      (wa/pulling-retry {::wa/done? int?
+                         ::wa/retry-ms 50
+                         ::wa/timeout 3000}
+        (do-something))"
   [options & body]
   `(pulling-retry* ~options (fn [] ~@body)))
 
+(s/def ::timeout nat-int?)
+(s/def ::done? fn?)
+(s/def ::retry-ms nat-int?)
+
 (s/fdef pulling-retry
-  :args (s/cat :options (s/keys :opt-un [::timeout ::done? ::retry-ms])
+  :args (s/cat :options (s/or :detailed (s/keys :opt [::timeout ::done? ::retry-ms])
+                              :quick any?)
                :body (s/* any?)))
 
 (defmacro async-test

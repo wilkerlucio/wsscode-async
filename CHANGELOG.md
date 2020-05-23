@@ -1,6 +1,10 @@
 # Change Log
 
-## [1.0.9]
+## [1.0.10]
+- BREAKING: use namespaced options in `pulling-retry`
+- Support simpler interface on `pulling-retry` - `(pulling-retry doner-check (ops))`
+
+## [1.0.9] -- Broken interface, avoid using this version
 - Add `timeout-chan`
 - Add `pulling-retry`
 

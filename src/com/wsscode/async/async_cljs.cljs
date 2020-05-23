@@ -56,20 +56,25 @@
         res))))
 
 (defn pulling-retry*
-  [{:keys [done? timeout retry-ms]
-    :or   {retry-ms 10
-           timeout  2000}} f]
-  (let [*stop? (atom false)
-        res    (timeout-chan timeout
-                 (go-promise
-                   (loop []
-                     (when-not @*stop?
-                       (let [res (<?maybe (f))]
-                         (if (done? res)
-                           res
-                           (do
-                             (async/<! (async/timeout retry-ms))
-                             (recur))))))))]
+  [options f]
+  (let [options' (if (map? options)
+                   options
+                   {::done? options})
+        {::keys [done? timeout retry-ms]
+         :or    {retry-ms 10
+                 timeout  2000}} options'
+        *stop?   (atom false)
+        res      (timeout-chan timeout
+                   (go-promise
+                     (loop []
+                       (when-not @*stop?
+                         (let [res (<?maybe (f))]
+                           (if (done? res)
+                             res
+                             (do
+                               (async/<! (async/timeout retry-ms))
+                               (recur))))))))]
+
     (go
       (async/<! (async/timeout timeout))
       (reset! *stop? true))

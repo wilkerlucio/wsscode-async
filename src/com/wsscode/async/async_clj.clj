@@ -155,20 +155,24 @@
         res))))
 
 (defn pulling-retry*
-  [{:keys [done? timeout retry-ms]
-    :or   {retry-ms 10
-           timeout  2000}} f]
-  (let [*stop? (atom false)
-        res    (timeout-chan timeout
-                 (go-promise
-                   (loop []
-                     (when-not @*stop?
-                       (let [res (<?maybe (f))]
-                         (if (done? res)
-                           res
-                           (do
-                             (async/<! (async/timeout retry-ms))
-                             (recur))))))))]
+  [options f]
+  (let [options' (if (map? options)
+                   options
+                   {::done? options})
+        {::keys [done? timeout retry-ms]
+         :or    {retry-ms 10
+                 timeout  2000}} options'
+        *stop?   (atom false)
+        res      (timeout-chan timeout
+                   (go-promise
+                     (loop []
+                       (when-not @*stop?
+                         (let [res (<?maybe (f))]
+                           (if (done? res)
+                             res
+                             (do
+                               (async/<! (async/timeout retry-ms))
+                               (recur))))))))]
 
     (go
       (async/<! (async/timeout timeout))
@@ -177,12 +181,29 @@
     res))
 
 (defmacro pulling-retry
-  "Async pulling mechanism that will run body will :done? is satisfied"
+  "Async pulling mechanism that will run body will ::done? is satisfied.
+
+  There two ways to call this helper:
+    Shorthand version: pass the ::done? function and the body:
+
+      (wa/pulling-retry int? (do-something))
+
+    Or the full version to specify all details
+
+      (wa/pulling-retry {::wa/done? int?
+                         ::wa/retry-ms 50
+                         ::wa/timeout 3000}
+        (do-something))"
   [options & body]
   `(pulling-retry* ~options (fn [] ~@body)))
 
+(s/def ::timeout nat-int?)
+(s/def ::done? fn?)
+(s/def ::retry-ms nat-int?)
+
 (s/fdef pulling-retry
-  :args (s/cat :options (s/keys :opt-un [::timeout ::done? ::retry-ms])
+  :args (s/cat :options (s/or :detailed (s/keys :opt [::timeout ::done? ::retry-ms])
+                              :quick any?)
                :body (s/* any?)))
 
 (defmacro async-test

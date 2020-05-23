@@ -138,19 +138,26 @@
       (go
         (<! (async/timeout 300))
         (reset! x 10))
-      (is (= (<! (wa/pulling-retry {:done? number?} @x)) 10))))
+      (is (= (<! (wa/pulling-retry {::wa/done? number?} @x)) 10))))
 
   (testing "async body"
     (let [x (atom nil)]
       (go
         (<! (async/timeout 300))
         (reset! x 10))
-      (is (= (<! (wa/pulling-retry {:done? number?} (go @x))) 10))))
+      (is (= (<! (wa/pulling-retry {::wa/done? number?} (go @x))) 10))))
+
+  (testing "quick done syntax"
+    (let [x (atom nil)]
+      (go
+        (<! (async/timeout 300))
+        (reset! x 10))
+      (is (= (<! (wa/pulling-retry number? @x)) 10))))
 
   (testing "stop after timeout"
     (let [x (atom 0)]
-      (<! (wa/pulling-retry {:done? neg?
-                             :timeout 100}
+      (<! (wa/pulling-retry {::wa/done?   neg?
+                             ::wa/timeout 100}
             (go
               (<! (async/timeout 200))
               (swap! x + 10)
