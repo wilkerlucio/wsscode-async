@@ -1,5 +1,5 @@
 (ns com.wsscode.async.async-cljs
-  (:require-macros [com.wsscode.async.async-cljs])
+  (:require-macros [com.wsscode.async.async-cljs :refer [go-promise]])
   (:require [cljs.core.async :as async]
             [cljs.core.async.impl.protocols :as async.prot]
             [goog.object :as gobj]))
@@ -44,3 +44,27 @@
   (if (error? x)
     (throw x)
     x))
+
+(defn timeout-chan
+  "Returns a channel that will respond will c, or an error after timeout-ms."
+  [timeout-ms c]
+  (go-promise
+    (let [timer (async/timeout timeout-ms)
+          [res ch] (async/alts! [c timer] :priority true)]
+      (if (= ch timer)
+        (throw (ex-info "Timeout" {:timeout-ms timeout-ms}))
+        res))))
+
+(defn pulling-retry*
+  [{:keys [done? timeout retry-ms]
+    :or   {retry-ms 10
+           timeout  2000}} f]
+  (timeout-chan timeout
+    (go-promise
+      (loop []
+        (let [res (f)]
+          (if (done? res)
+            res
+            (do
+              (async/<! (async/timeout retry-ms))
+              (recur))))))))

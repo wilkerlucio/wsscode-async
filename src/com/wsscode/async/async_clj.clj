@@ -144,6 +144,39 @@
        (let [~name res#]
          ~@body))))
 
+(defn timeout-chan
+  "Returns a channel that will respond will c, or an error after timeout-ms."
+  [timeout-ms c]
+  (go-promise
+    (let [timer (async/timeout timeout-ms)
+          [res ch] (async/alts! [c timer] :priority true)]
+      (if (= ch timer)
+        (throw (ex-info "Timeout" {:timeout-ms timeout-ms}))
+        res))))
+
+(defn pulling-retry*
+  [{:keys [done? timeout retry-ms]
+    :or   {retry-ms 10
+           timeout  2000}} f]
+  (timeout-chan timeout
+    (go-promise
+      (loop []
+        (let [res (f)]
+          (if (done? res)
+            res
+            (do
+              (async/<! (async/timeout retry-ms))
+              (recur))))))))
+
+(defmacro pulling-retry
+  "Async pulling mechanism that will run body will :done? is satisfied"
+  [options & body]
+  `(pulling-retry* ~options (fn [] ~@body)))
+
+(s/fdef pulling-retry
+  :args (s/cat :options (s/keys :opt-un [::timeout ::done? ::retry-ms])
+               :body (s/* any?)))
+
 (defmacro async-test
   "Ths is similar to the CLJS version for async test, but on the Clojure side the `async`
   helper doesn't exist, instead of using that we block on the wrapper go block. Example:
@@ -170,8 +203,8 @@
     `(let [timeout-ms# ~timeout]
        (async/<!!
          (async/go
-           (let [timer# (clojure.core.async/timeout timeout-ms#)
-                 [res# ch#] (clojure.core.async/alts! [(go-promise ~@body) timer#] :priority true)]
+           (let [timer# (async/timeout timeout-ms#)
+                 [res# ch#] (async/alts! [(go-promise ~@body) timer#] :priority true)]
              (if (= ch# timer#)
                (clojure.test/is (= (str "Test timeout after " timeout-ms# "ms") false)))
              (if (error? res#)

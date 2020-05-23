@@ -102,6 +102,15 @@
        (let [~name res#]
          ~@body))))
 
+(defmacro pulling-retry
+  "Async pulling mechanism that will run body will :done? is satisfied"
+  [options & body]
+  `(pulling-retry* ~options (fn [] ~@body)))
+
+(s/fdef pulling-retry
+  :args (s/cat :options (s/keys :opt-un [::timeout ::done? ::retry-ms])
+               :body (s/* any?)))
+
 (defmacro async-test
   "Creates an async block on the test, this helper uses the cljs.test async feature, the user body
   will be wrapped around a `go` block automatically and the async done will be called
@@ -201,3 +210,4 @@
   [sym & body]
   `(cljs.test/deftest ~sym
      (async-test ~@body)))
+
