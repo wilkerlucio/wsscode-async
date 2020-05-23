@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.9]
+- Add `timeout-chan`
+- Add `pulling-retry`
+
 ## [1.0.8]
 - Fixes `go-loop` wrappers, thanks clj-kondo!
 
