@@ -25,19 +25,19 @@
   "Creates a go block using a promise channel, so the output of the go block can be
   read any number of times once ready."
   [& body]
-  `(let [ch# (cljs.core.async/promise-chan)]
+  `(let [ch# (async/promise-chan)]
      (async/go
        (if-some [res# (try
                         ~@body
                         (catch :default e# e#))]
-         (cljs.core.async/put! ch# res#)
-         (cljs.core.async/close! ch#)))
+         (async/put! ch# res#)
+         (async/close! ch#)))
      ch#))
 
 (defmacro <!
   "Same as clojure.core.async/<!!. Just a convenience place for it."
   [& body]
-  `(cljs.core.async/<! ~@body))
+  `(async/<! ~@body))
 
 (defmacro <!p
   "Similar to core.async <!, but instead of taking a channel, <!p takes a Javascript
@@ -51,12 +51,12 @@
             .text <!p ; await for text body reading
             js/console.log))"
   [promise]
-  `(consumer-pair (cljs.core.async/<! (promise->chan ~promise))))
+  `(consumer-pair (async/<! (promise->chan ~promise))))
 
 (defmacro <?
   "Reads a channel value and check if it is an error, in case it is, throw the error."
   [ch]
-  `(throw-err (cljs.core.async/<! ~ch)))
+  `(throw-err (async/<! ~ch)))
 
 (defmacro <?maybe
   "Tries to await for a value, first if checks if x is a channel, if so will read
@@ -78,7 +78,7 @@
   "Reads a channel if it is a channel, if it's not a channel, return x."
   [x]
   `(let [res# ~x]
-     (if (chan? res#) (cljs.core.async/<! res#) res#)))
+     (if (chan? res#) (async/<! res#) res#)))
 
 (defmacro let-chan
   "Handles a possible channel on value."
@@ -97,10 +97,19 @@
   `(let [res# ~value]
      (if (chan? res#)
        (go-catch
-         (let [~name (cljs.core.async/<! res#)]
+         (let [~name (async/<! res#)]
            ~@body))
        (let [~name res#]
          ~@body))))
+
+(defmacro pulling-retry
+  "Async pulling mechanism that will run body will :done? is satisfied"
+  [options & body]
+  `(pulling-retry* ~options (fn [] ~@body)))
+
+(s/fdef pulling-retry
+  :args (s/cat :options (s/keys :opt-un [::timeout ::done? ::retry-ms])
+               :body (s/* any?)))
 
 (defmacro async-test
   "Creates an async block on the test, this helper uses the cljs.test async feature, the user body
@@ -129,8 +138,8 @@
     `(cljs.test/async done#
        (let [timeout-ms# ~timeout]
          (async/go
-           (let [timer# (cljs.core.async/timeout timeout-ms#)
-                 [res# ch#] (cljs.core.async/alts! [(go-promise ~@body) timer#] :priority true)]
+           (let [timer# (async/timeout timeout-ms#)
+                 [res# ch#] (async/alts! [(go-promise ~@body) timer#] :priority true)]
              (if (= ch# timer#)
                (cljs.test/is (= (str "Test timeout after " timeout-ms# "ms") false)))
              (if (error? res#)
@@ -201,3 +210,4 @@
   [sym & body]
   `(cljs.test/deftest ~sym
      (async-test ~@body)))
+

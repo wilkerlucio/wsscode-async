@@ -169,6 +169,41 @@
                   x))
            err2))))
 
+(wa/deftest-async timeout-chan-test
+  (try
+    (wa/<? (wa/timeout-chan 100 (go (<! (async/timeout 500)))))
+    (is (= "Timeout was expected" true))
+    (catch Throwable _
+      (is (= true true)))))
+
+(wa/deftest-async pulling-retry-test
+  (testing "sync body"
+    (let [x (atom nil)]
+      (go
+        (<! (async/timeout 300))
+        (reset! x 10))
+      (is (= (<! (wa/pulling-retry {:done? number?} @x)) 10))))
+
+  (testing "async body"
+    (let [x (atom nil)]
+      (go
+        (<! (async/timeout 300))
+        (reset! x 10))
+      (is (= (<! (wa/pulling-retry {:done? number?} (go @x))) 10))))
+
+  (testing "stop after timeout"
+    (let [x (atom 0)]
+      (<! (wa/pulling-retry {:done? neg?
+                             :timeout 100}
+            (go
+              (<! (async/timeout 200))
+              (swap! x + 10)
+              @x)))
+
+      (<! (async/timeout 500))
+
+      (is (= @x 10)))))
+
 (wa/deftest-async go-try-stream-test
   (is (= (let [vals (atom [])
                c    (async/chan 50)]
