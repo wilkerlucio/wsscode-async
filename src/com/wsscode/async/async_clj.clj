@@ -158,15 +158,21 @@
   [{:keys [done? timeout retry-ms]
     :or   {retry-ms 10
            timeout  2000}} f]
-  (timeout-chan timeout
-    (go-promise
-      (loop []
-        (let [res (<?maybe (f))]
-          (if (done? res)
-            res
-            (do
-              (async/<! (async/timeout retry-ms))
-              (recur))))))))
+  (let [*stop? (atom false)]
+    (go
+      (async/<! (async/timeout timeout))
+      (reset! *stop? true))
+
+    (timeout-chan timeout
+      (go-promise
+        (loop []
+          (when-not @*stop?
+            (let [res (<?maybe (f))]
+              (if (done? res)
+                res
+                (do
+                  (async/<! (async/timeout retry-ms))
+                  (recur))))))))))
 
 (defmacro pulling-retry
   "Async pulling mechanism that will run body will :done? is satisfied"

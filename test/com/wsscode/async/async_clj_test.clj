@@ -189,7 +189,20 @@
       (go
         (<! (async/timeout 300))
         (reset! x 10))
-      (is (= (<! (wa/pulling-retry {:done? number?} (go @x))) 10)))))
+      (is (= (<! (wa/pulling-retry {:done? number?} (go @x))) 10))))
+
+  (testing "stop after timeout"
+    (let [x (atom 0)]
+      (<! (wa/pulling-retry {:done? neg?
+                             :timeout 100}
+            (go
+              (<! (async/timeout 200))
+              (swap! x + 10)
+              @x)))
+
+      (<! (async/timeout 500))
+
+      (is (= @x 10)))))
 
 (wa/deftest-async go-try-stream-test
   (is (= (let [vals (atom [])
