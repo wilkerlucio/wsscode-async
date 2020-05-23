@@ -161,7 +161,7 @@
   (timeout-chan timeout
     (go-promise
       (loop []
-        (let [res (f)]
+        (let [res (<?maybe (f))]
           (if (done? res)
             res
             (do

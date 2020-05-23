@@ -177,11 +177,19 @@
       (is (= true true)))))
 
 (wa/deftest-async pulling-retry-test
-  (let [x (atom nil)]
-    (go
-      (<! (async/timeout 300))
-      (reset! x 10))
-    (is (= (<! (wa/pulling-retry {:done? number?} @x)) 10))))
+  (testing "sync body"
+    (let [x (atom nil)]
+      (go
+        (<! (async/timeout 300))
+        (reset! x 10))
+      (is (= (<! (wa/pulling-retry {:done? number?} @x)) 10))))
+
+  (testing "async body"
+    (let [x (atom nil)]
+      (go
+        (<! (async/timeout 300))
+        (reset! x 10))
+      (is (= (<! (wa/pulling-retry {:done? number?} (go @x))) 10)))))
 
 (wa/deftest-async go-try-stream-test
   (is (= (let [vals (atom [])

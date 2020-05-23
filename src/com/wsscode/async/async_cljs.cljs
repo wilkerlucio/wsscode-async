@@ -1,5 +1,5 @@
 (ns com.wsscode.async.async-cljs
-  (:require-macros [com.wsscode.async.async-cljs :refer [go-promise]])
+  (:require-macros [com.wsscode.async.async-cljs :refer [go-promise <?maybe]])
   (:require [cljs.core.async :as async]
             [cljs.core.async.impl.protocols :as async.prot]
             [goog.object :as gobj]))
@@ -62,7 +62,7 @@
   (timeout-chan timeout
     (go-promise
       (loop []
-        (let [res (f)]
+        (let [res (<?maybe (f))]
           (if (done? res)
             res
             (do
