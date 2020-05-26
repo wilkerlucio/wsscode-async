@@ -103,7 +103,7 @@
          ~@body))))
 
 (defmacro pulling-retry
-  "Async pulling mechanism that will run body will ::done? is satisfied.
+  "Async pulling mechanism that will run body until ::done? is satisfied.
 
   There two ways to call this helper:
     Shorthand version: pass the ::done? function and the body:
