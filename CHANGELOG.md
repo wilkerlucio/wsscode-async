@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.11]
+- Release using Leiningen to get cljdoc back to work.
+
 ## [1.0.10]
 - BREAKING: use namespaced options in `pulling-retry`
 - Support simpler interface on `pulling-retry` - `(pulling-retry doner-check (ops))`

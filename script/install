@@ -1,4 +1,0 @@
-#!/bin/bash
-
-clojure -A:pack
-clojure -A:install
