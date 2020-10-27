@@ -6,7 +6,7 @@
 
   :source-paths ["src"]
 
-  :dependencies [[org.clojure/core.async "1.1.587"]]
+  :dependencies [[org.clojure/core.async "1.3.610"]]
 
   :jar-exclusions [#"node-modules/.+"]
 
