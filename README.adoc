@@ -399,7 +399,7 @@ In your handle, to reply a message, to this:
 [source,clojure]
 ----
 (defn some-handler [msg]
-  (send-message! (wap/reply-message msg) "reply value"))
+  (send-message! (wap/reply-message msg "reply value")))
 ----
 
 And finally, to issue a request and wait for the callback:
