@@ -6,11 +6,11 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: DeLaGuardo/setup-clj-kondo@v1
+      - uses: DeLaGuardo/setup-clj-kondo@master
         with:
           version: '2020.04.05'
 
-      - uses: DeLaGuardo/setup-clojure@2.0
+      - uses: DeLaGuardo/setup-clojure@master
         with:
           tools-deps: '1.10.1.469'
 
@@ -28,7 +28,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - uses: DeLaGuardo/setup-clojure@2.0
+      - uses: DeLaGuardo/setup-clojure@master
         with:
           tools-deps: '1.10.1.469'
 
@@ -49,7 +49,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - uses: DeLaGuardo/setup-clojure@2.0
+      - uses: DeLaGuardo/setup-clojure@master
         with:
           tools-deps: '1.10.1.469'
 
