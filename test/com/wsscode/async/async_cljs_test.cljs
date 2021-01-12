@@ -170,7 +170,7 @@
 (wa/deftest-async go-try-stream-test
   (is (= (let [vals (atom [])
                c    (async/chan 50)]
-           (async/onto-chan c [:a (ex-info "err" {}) :b] true)
+           (async/onto-chan! c [:a (ex-info "err" {}) :b] true)
            (<! (wa/go-try-stream [value c]
                  (swap! vals conj value)
                  (catch :default e
