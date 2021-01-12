@@ -91,7 +91,19 @@
   (let [err (ex-info "foo" {:bar "baz"})]
     (is (= (<! (wa/go-promise
                   (wa/<?maybe (fail-ch err))))
-           err))))
+           err)))
+
+  (is (= (<! (wa/go-promise
+               (try
+                 (wa/<?maybe (fail-ch (ex-info "foo" {:bar "baz"})))
+                 (catch :default _ "error"))))
+         "error"))
+
+  (is (= (<! (wa/go-promise
+               (try
+                 (wa/<?maybe (js/Promise.reject (ex-info "foo" {:bar "baz"})))
+                 (catch :default _ "error"))))
+         "error")))
 
 (wa/deftest-async test-let-chan
   (is (= (wa/let-chan [x "foo"]
