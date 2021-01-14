@@ -4,7 +4,7 @@
   <groupId>com.wsscode</groupId>
   <artifactId>async</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.13</version>
+  <version>2021.01.14</version>
   <name>async</name>
   <description>Helpers for Clojure core.async.</description>
   <url>https://github.com/wilkerlucio/wsscode-async</url>
@@ -18,7 +18,7 @@
     <url>https://github.com/wilkerlucio/wsscode-async</url>
     <connection>scm:git:git://github.com/wilkerlucio/wsscode-async.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/wilkerlucio/wsscode-async.git</developerConnection>
-    <tag>4412bc1c7ac3e4fe6302ad79746de3b2c182e999</tag>
+    <tag>40cd60df8042c2b9e7881d55f789974abcd59a70</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
