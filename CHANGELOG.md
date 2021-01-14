@@ -1,5 +1,8 @@
 # Change Log
 
+## [2020.01.14]
+- Provide clj-kondo exports for lint
+
 ## [1.0.11]
 - Release using Leiningen to get cljdoc back to work.
 
