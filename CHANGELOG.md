@@ -28,7 +28,7 @@
  instead of `cljs.core.async` for macros, this could break some builds in very 
  unexpected ways, this update is highly encouraged.
 
-## 1.0.5] - BROKEN, DON'T US
+## 1.0.5 - BROKEN, DON'T USE
 - Add `go-try-stream` helper
 
 ## 1.0.4
